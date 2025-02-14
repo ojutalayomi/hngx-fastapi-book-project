@@ -42,7 +42,7 @@ jobs:
       run: |
         source venv/bin/activate
         pip install flake8
-        flake8 .
+        flake8 . || exit 1
 
     - name: Run pytest
       run: |

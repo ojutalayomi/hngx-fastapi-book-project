@@ -48,6 +48,7 @@ async def get_books() -> OrderedDict[int, Book]:
 async def get_book(book_id: int) -> Optional[Book]:
     response = db.get_book(book_id)
     if response:
+        print(response
         return response
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND, content={"detail": "Book not found"}
