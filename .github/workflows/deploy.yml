@@ -28,5 +28,5 @@ jobs:
           if [ ! -d "hngx-stage2-fastapi-book-project" ]; then
             git clone https://${{ secrets.PAT }}@github.com/ojutalayomi/hngx-stage2-fastapi-book-project.git
           fi &&
-          /home/ubuntu/deploy.sh
+          /home/ubuntu/deploy.sh #..
         EOF
