@@ -36,14 +36,6 @@ jobs:
         source venv/bin/activate
         flake8 . || exit 1
 
-    - name: Test invalid code
-      run: |
-        source venv/bin/activate
-        echo "def invalid_function():" > invalid_code.py
-        echo "    return" >> invalid_code.py
-        echo "invalid_function(" >> invalid_code.py  # Missing closing parenthesis
-        python3 -m py_compile invalid_code.py || exit 1
-
     - name: Run pytest
       run: |
         source venv/bin/activate
