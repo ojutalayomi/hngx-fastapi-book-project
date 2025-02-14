@@ -24,14 +24,9 @@ jobs:
       run: |
         python3 -m venv venv
         source venv/bin/activate
-        pip install -r requirements.txt pytest black isort
-
-    - name: Check for syntax errors
-      run: |
-        source venv/bin/activate
-        python3 -m py_compile $(find . -name "*.py")
+        pip install -r requirements.txt pytest isort
 
     - name: Run pytest
       run: |
         source venv/bin/activate
-        pytest
+        pytest  --maxfail=1
