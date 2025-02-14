@@ -1,0 +1,40 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy Application to EC2 
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /home/ubuntu &&
+          if [ ! -d "hngx-stage2-fastapi-book-project" ]; then
+            git clone https://github.com/ojutalayomi/hngx-stage2-fastapi-book-project.git
+          fi &&
+          cd hngx-stage2-fastapi-book-project &&
+          git pull origin main &&
+          python3 -m venv venv &&
+          source venv/bin/activate &&
+          python3 -m pip install --upgrade pip &&
+          pip install -r requirements.txt &&
+          sudo systemctl daemon-reload &&
+          sudo systemctl enable fastapi-app &&
+          sudo systemctl restart fastapi-app
+        EOF
