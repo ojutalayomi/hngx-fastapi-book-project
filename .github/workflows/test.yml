@@ -31,6 +31,13 @@ jobs:
         source venv/bin/activate
         python3 -m py_compile $(find . -name "*.py")
 
+    - name: Auto-format code
+      run: |
+        source venv/bin/activate
+        pip install black isort
+        black .
+        isort .
+
     - name: Run flake8 for linting
       run: |
         source venv/bin/activate
