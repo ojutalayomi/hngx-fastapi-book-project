@@ -9,6 +9,7 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
     - name: Checkout code
@@ -23,26 +24,25 @@ jobs:
       run: |
         python3 -m venv venv
         source venv/bin/activate
-        pip install -r requirements.txt
-        pip install flake8 pytest  # Install both Flake8 and pytest
+        pip install -r requirements.txt flake8 pytest black isort
 
     - name: Check for syntax errors
       run: |
         source venv/bin/activate
         python3 -m py_compile $(find . -name "*.py")
 
-    - name: Auto-format code
-      run: |
-        source venv/bin/activate
-        pip install black isort
-        black .
-        isort .
-
     - name: Run flake8 for linting
       run: |
         source venv/bin/activate
-        pip install flake8
         flake8 . || exit 1
+
+    - name: Test invalid code
+      run: |
+        source venv/bin/activate
+        echo "def invalid_function():" > invalid_code.py
+        echo "    return" >> invalid_code.py
+        echo "invalid_function(" >> invalid_code.py  # Missing closing parenthesis
+        python3 -m py_compile invalid_code.py || exit 1
 
     - name: Run pytest
       run: |
